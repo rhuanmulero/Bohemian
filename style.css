@@ -12,6 +12,18 @@
     --font-main: 'Inter', sans-serif;
 }
 
+/* --- RESET GLOBAL PARA BOTÕES --- */
+button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    color: inherit;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
 
 body {
@@ -780,22 +792,19 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 .color-dot.selected { opacity: 1; border-color: white; box-shadow: 0 0 10px currentColor; }
 
 .btn-text-danger {
-    background: none;
-    border: none;
+    background-color: transparent !important; /* Força transparência */
+    border: 1px solid transparent; /* Evita pulos de layout */
     color: #ff4d4d;
-    cursor: pointer;
     font-size: 0.8rem;
     opacity: 0.7;
-    
-    /* ADICIONE ISSO AQUI: */
     margin-left: auto; 
-    padding: 5px 10px; /* Um pouco de área de clique */
+    padding: 10px;
     transition: 0.2s;
+    width: 100%; /* Garante que ocupe a largura no modal */
 }
 
 .btn-text-danger:hover {
     opacity: 1;
-    background: rgba(255, 77, 77, 0.1);
+    background: rgba(255, 77, 77, 0.1) !important;
     border-radius: 6px;
-    text-decoration: none; /* Remove sublinhado se tiver */
 }
