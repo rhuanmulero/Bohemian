@@ -1,0 +1,801 @@
+/* --- VARIÁVEIS & RESET --- */
+:root {
+    --bg-dark: #050507;
+    --glass-panel: rgba(30, 30, 35, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary: #7c3aed; /* Roxo Neon */
+    --primary-glow: rgba(124, 58, 237, 0.4);
+    --text-main: #ffffff;
+    --text-muted: #a1a1aa;
+    --radius-l: 24px;
+    --radius-m: 16px;
+    --font-main: 'Inter', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- FUNDO AMBIENTE --- */
+.background-orb {
+    position: fixed; width: 60vw; height: 60vw;
+    background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+    top: -20%; left: -20%; filter: blur(100px); z-index: -1;
+    animation: pulse 10s infinite alternate;
+}
+@keyframes pulse { 0% { opacity: 0.3; } 100% { opacity: 0.6; transform: scale(1.1); } }
+
+/* --- LAYOUT GERAL --- */
+.app-wrapper {
+    width: 95vw; height: 92vh;
+    background: var(--glass-panel); border: 1px solid var(--glass-border);
+    backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px);
+    border-radius: var(--radius-l);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    display: flex; overflow: hidden;
+}
+
+/* --- SIDEBAR --- */
+.sidebar {
+    width: 80px; background: rgba(0,0,0,0.2); border-right: 1px solid var(--glass-border);
+    display: flex; flex-direction: column; align-items: center; padding: 30px 0; justify-content: space-between;
+}
+.brand { color: var(--text-main); margin-bottom: 40px; opacity: 0.8; }
+.nav-group { display: flex; flex-direction: column; gap: 20px; }
+.nav-btn {
+    background: transparent; border: none; color: var(--text-muted);
+    width: 50px; height: 50px; border-radius: 14px; cursor: pointer;
+    transition: 0.3s; display: flex; align-items: center; justify-content: center;
+}
+.nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+.nav-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
+.nav-btn .material-icons-round { font-size: 24px; }
+
+/* --- CONTENT AREA --- */
+.content-area { flex: 1; padding: 40px; overflow-y: auto; position: relative; }
+.tab-content { display: none; animation: fadeIn 0.4s ease-out; height: 100%; }
+.tab-content.active { display: flex; flex-direction: column; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tab-header h1 { font-weight: 800; font-size: 2rem; margin-bottom: 5px; }
+
+/* --- GRID FICHA --- */
+.sheet-container {
+    display: grid; grid-template-columns: 320px 1fr 320px; 
+    gap: 20px; height: 100%; overflow: hidden; 
+}
+@media (max-width: 1300px) { .sheet-container { grid-template-columns: 300px 1fr 300px; } }
+@media (max-width: 1000px) { .sheet-container { grid-template-columns: 1fr; overflow-y: auto; } }
+
+.sheet-column { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; padding-right: 5px; }
+.sheet-column::-webkit-scrollbar { width: 6px; }
+.sheet-column::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* --- CARDS & ELEMENTOS UI --- */
+.glass-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: var(--radius-m); padding: 20px;
+}
+.card-title {
+    font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted); margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;
+}
+
+/* Inputs & Forms */
+.input-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.row-group { display: flex; gap: 15px; margin-top: 10px; }
+.mt-10 { margin-top: 15px; } .mt-20 { margin-top: 10px; }
+label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+input, select, textarea {
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white;
+    padding: 12px; border-radius: 8px; font-family: var(--font-main); font-size: 0.95rem; width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+
+/* Custom Buttons (Triggers para Modal) */
+.selection-trigger {
+    width: 100%; padding: 12px; background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 8px;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-main); font-size: 0.95rem; transition: 0.2s;
+}
+.selection-trigger:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
+.selection-trigger span:first-child { font-weight: 600; color: #e0e0e0; }
+
+/* Photo */
+.identity-card { text-align: center; padding: 15px; }
+.photo-uploader {
+    width: 120px; height: 120px; margin: 0 auto 20px auto; border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.2); display: flex;
+    align-items: center; justify-content: center; cursor: pointer; overflow: hidden;
+}
+.photo-uploader img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- ATRIBUTOS (NOVO LAYOUT) --- */
+.attributes-grid {
+    display: grid;
+    /* Muda para 6 colunas para ficar tudo em uma linha */
+    grid-template-columns: repeat(6, 1fr); 
+    gap: 8px;
+}
+
+.attr-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px 5px; /* Um pouco mais de padding vertical */
+    display: flex;
+    flex-direction: column;
+    align-items: center;     /* Centraliza horizontalmente */
+    justify-content: center; /* Centraliza verticalmente */
+    text-align: center;
+    position: relative;
+    min-height: 85px; /* Garante altura uniforme para todos */
+}
+
+.attr-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    width: 100%;
+    text-align: center; /* Garante que o texto fique no meio */
+    letter-spacing: 1px;
+}
+
+.attr-input {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem; /* Aumentei um pouco para destaque */
+    font-weight: 800;
+    color: white;
+    text-align: center;
+    width: 100%;
+    padding: 0;
+    margin: 2px 0; /* Espaçamento leve entre label e badge */
+    height: auto;
+    line-height: 1; /* Remove espaçamento de linha extra */
+    font-family: var(--font-main);
+}
+
+.attr-input:focus {
+    outline: none;
+    color: var(--primary);
+}
+
+.attr-input::-webkit-outer-spin-button,
+.attr-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* O Modificador (Badge) */
+.attr-mod-badge {
+    margin-top: 2px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.8rem; /* Badge menor */
+    padding: 1px 8px;
+    border-radius: 10px;
+    min-width: 35px;
+    text-align: center;
+}
+
+/* Utilitário de margem */
+.mb-20 { margin-bottom: 20px; }
+
+/* PERÍCIAS */
+.skills-list {
+    display: grid;
+    /* Mantém 2 colunas */
+    grid-template-columns: 1fr 1fr; 
+    gap: 2px 15px; /* Reduz o gap vertical para 2px */
+    align-content: start; 
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+@media (max-width: 1200px) { 
+    .skills-list { grid-template-columns: 1fr; } 
+}
+
+.skill-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem; /* Fonte ligeiramente menor */
+    padding: 4px 8px;  /* Altura da linha bem mais compacta */
+    border-radius: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+
+.skill-row:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* CAIXA DE SELEÇÃO (CHECKBOX CUSTOMIZADO) */
+.skill-check {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--text-muted);
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    background: rgba(0,0,0,0.3);
+}
+
+/* Nível 1: Treinado (Cor Primária) */
+.skill-check.trained {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary-glow);
+}
+
+/* Nível 2: Especialista (Dourado/Amarelo) */
+.skill-check.expert {
+    background: #ffd700; /* Ouro */
+    border-color: #ffd700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+/* Indicador visual dentro do quadrado (opcional, pode ser um icone) */
+.skill-check.expert::after {
+    content: '★'; /* Estrela para especialista */
+    font-size: 10px;
+    color: #000;
+    font-weight: bold;
+}
+
+.skill-name {
+    color: #e0e0e0;
+}
+
+.skill-attr {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-right: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.skill-val {
+    font-weight: bold;
+    width: 28px;
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+/* Info Box & Utilitários */
+.info-box { margin-top: 15px; padding: 10px; background: rgba(124, 58, 237, 0.1); border-left: 3px solid var(--primary); font-size: 0.85rem; color: #ddd; line-height: 1.4; }
+.hidden {
+    display: none !important;
+    visibility: hidden !important;
+}
+.hybrid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Power Tabs */
+.tabs-power { display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 8px; }
+.p-tab { flex: 1; background: transparent; border: none; color: var(--text-muted); padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+.p-tab.active { background: var(--primary); color: white; }
+.slot-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.slot-num { background: rgba(255,255,255,0.1); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; }
+.slot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.slot-item-mini { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+
+/* --- MODAIS GERAIS --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px);
+    z-index: 9999; display: flex; justify-content: center; align-items: center;
+    opacity: 1; transition: opacity 0.3s;
+}
+.modal-overlay.hidden { opacity: 0; pointer-events: none; display: none; }
+.modal-content {
+    width: 400px; max-width: 90%; background: #121216; border: 1px solid var(--primary);
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.2); display: flex; flex-direction: column; gap: 20px;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+.modal-header h3 { color: var(--primary); margin: 0; }
+.btn-close { background: none; border: none; color: #fff; cursor: pointer; }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+.btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #ccc; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-confirm { background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-confirm:hover { box-shadow: 0 0 15px var(--primary-glow); }
+
+/* --- MODAL LARGO (SELEÇÃO) --- */
+.modal-large { width: 700px; max-width: 95%; }
+.modal-body-split { display: flex; height: 350px; gap: 20px; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); margin: 10px 0; padding: 15px 0; }
+
+.selection-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; padding-right: 5px; border-right: 1px solid rgba(255,255,255,0.05); }
+.selection-option { padding: 10px; border-radius: 6px; cursor: pointer; text-align: left; background: transparent; border: 1px solid transparent; color: var(--text-muted); transition: 0.2s; }
+.selection-option:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.selection-option.selected { background: var(--primary); color: #fff; font-weight: bold; box-shadow: 0 2px 10px var(--primary-glow); }
+
+.selection-details { flex: 1.2; padding: 10px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
+.selection-details h4 { font-size: 1.4rem; color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+.selection-details p { font-size: 0.9rem; line-height: 1.5; color: #ccc; }
+.stat-badge-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.stat-badge { background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: var(--primary); border: 1px solid rgba(124, 58, 237, 0.3); }
+
+/* Scrollbars */
+.selection-list::-webkit-scrollbar, .selection-details::-webkit-scrollbar { width: 5px; }
+.selection-list::-webkit-scrollbar-thumb, .selection-details::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+/* LISTA DE ARMAS */
+.weapon-list { display: flex; flex-direction: column; gap: 8px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+.weapon-card-display { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+.weapon-card-display:hover { background: rgba(255,255,255,0.06); }
+.wc-info { display: flex; flex-direction: column; gap: 2px; }
+.wc-name { font-weight: bold; color: var(--text-main); font-size: 0.9rem; }
+.wc-meta { font-size: 0.75rem; color: var(--text-muted); }
+.wc-meta span { color: var(--primary); margin-left: 5px; }
+.wc-dmg { background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; color: #fff; border: 1px solid rgba(255,255,255,0.1); min-width: 60px; text-align: center; margin-right: 10px; }
+.btn-del { width: 30px; height: 30px; border-radius: 6px; background: rgba(255, 80, 80, 0.1); color: #ff6b6b; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.btn-del:hover { background: #ff6b6b; color: white; }
+.btn-add-weapon { width: 100%; padding: 12px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,255,255,0.2); color: var(--text-muted); border-radius: 8px; cursor: pointer; }
+.btn-add-weapon:hover { color: white; border-color: var(--primary); }
+
+/* PLACEHOLDERS */
+.empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); border: 2px dashed var(--glass-border); border-radius: var(--radius-m); background: rgba(0,0,0,0.1); }
+.notepad-container { flex: 1; background: rgba(0,0,0,0.2); border-radius: var(--radius-m); border: 1px solid var(--glass-border); padding: 20px; }
+.notepad-container textarea { width: 100%; height: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; line-height: 1.6; resize: none; }
+
+/* Adicione/Substitua estas partes no seu CSS */
+
+/* Botões de Treino na Lista de Perícias */
+.train-controls {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    margin-right: 8px;
+    padding: 2px;
+}
+
+.btn-train {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+
+.btn-train:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+}
+
+.train-val {
+    font-size: 0.75rem;
+    min-width: 18px;
+    text-align: center;
+    color: #e0e0e0;
+}
+
+/* Ajuste na Skill Row para caber os botões */
+.skill-row {
+    padding: 8px; /* Um pouco mais de espaço */
+}
+
+/* Valor Total da Perícia */
+.skill-total {
+    font-weight: 800;
+    width: 30px;
+    text-align: right;
+    font-size: 1rem;
+}
+
+/* Badge de Estatísticas no Modal */
+.stat-badge {
+    background: rgba(124, 58, 237, 0.15);
+    border: 1px solid var(--primary);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.attr-racial-bonus {
+    position: absolute;
+    top: -5px;
+    right: 0px;
+    font-size: 0.7rem;
+    color: #4dff88; /* Verde Neon */
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+
+#race-info {
+    min-height: 80px;
+    font-size: 0.8rem;
+    padding: 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+    margin-top: 15px;
+    line-height: 1.4;
+}
+
+#race-info:empty {
+    display: none;
+}
+
+.static-display {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.1);
+    height: 48px; /* Mesma altura dos inputs */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Inputs de Recursos (Vida, Namel, Fôlego) --- */
+.resource-input {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    height: 38px;
+    padding-right: 35px; /* Espaço para o texto do Max */
+}
+
+/* Remove as setinhas dos inputs number */
+.resource-input::-webkit-outer-spin-button,
+.resource-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* O texto pequeno do Máximo (ex: / 15) */
+.resource-max {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    pointer-events: none; /* Permite clicar no input através do texto */
+}
+
+/* Ajuste do campo de Dinheiro */
+#char-money:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+/* 1. Define altura e comportamento idêntico para Input e Div de Defesa */
+.resource-input, 
+#def-display {
+    height: 42px !important; /* Força altura igual */
+    font-size: 1.3rem;       /* Tamanho da fonte igual */
+    font-weight: 800;
+    border-radius: 8px;
+    box-sizing: border-box;  /* Garante que padding não aumente o tamanho */
+}
+
+/* 2. Ajuste específico para o Input de Vida/Namel */
+.resource-input {
+    text-align: center;      /* Centraliza o número */
+    padding: 0 40px 0 10px;  /* Padding direita extra para o "/ 15" não sobrepor */
+}
+
+/* 3. Ajuste específico para a Div de Defesa (para centralizar vertical/horizontal) */
+#def-display {
+    display: flex;
+    align-items: center;     /* Centro Vertical */
+    justify-content: center; /* Centro Horizontal */
+    padding: 0;              /* Remove padding extra */
+    background: rgba(0,0,0,0.4); /* Fundo igual ao input */
+    border: 1px solid;       /* Borda base */
+}
+
+/* 4. Ajuste fino do texto "/ 15" */
+.resource-max {
+    right: 12px;             /* Afasta um pouco da borda direita */
+    font-family: var(--font-main);
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+/* Badge de Bônus dentro do botão de seleção */
+.badge-bonus {
+    background: rgba(77, 255, 136, 0.2);
+    color: #4dff88;
+    border: 1px solid rgba(77, 255, 136, 0.4);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+}
+
+/* --- SISTEMA DE NOTAS (POST-ITS) --- */
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding-bottom: 20px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.note-card {
+    background: rgba(30, 30, 35, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 3px solid var(--primary); /* Charme visual */
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    min-height: 200px;
+}
+
+.note-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.2);
+    border-top-color: #4dff88; /* Muda cor ao passar mouse */
+}
+
+/* Cabeçalho da Nota (Input de Título) */
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 8px;
+}
+
+.note-title-input {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1rem;
+    width: 85%;
+    padding: 0;
+}
+.note-title-input:focus {
+    box-shadow: none;
+    border: none;
+    color: #fff;
+}
+.note-title-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* Corpo da Nota (Textarea) */
+.note-body-input {
+    background: transparent;
+    border: none;
+    color: #ddd;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: none;
+    flex: 1; /* Ocupa o resto do card */
+    font-family: var(--font-main);
+    width: 100%;
+    min-height: 120px;
+}
+.note-body-input:focus {
+    box-shadow: none;
+    border: none;
+}
+
+/* Botão de Deletar */
+.btn-delete-note {
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    transition: 0.2s;
+    padding: 4px;
+    border-radius: 4px;
+}
+.btn-delete-note:hover {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.1);
+}
+
+/* --- LAYOUT MASTER-DETAIL DAS NOTAS --- */
+.notes-layout {
+    display: flex;
+    height: 100%;
+    gap: 0; /* Sem gap, a borda separa */
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Coluna da Esquerda (Lista) */
+.notes-sidebar {
+    width: 250px;
+    background: rgba(20, 20, 25, 0.6);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-sidebar-header {
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.notes-sidebar-header h2 { font-size: 1rem; color: var(--text-muted); margin: 0; }
+
+.btn-icon-small {
+    background: transparent; border: 1px solid rgba(255,255,255,0.1);
+    color: var(--primary); border-radius: 6px; width: 30px; height: 30px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
+}
+.btn-icon-small:hover { background: var(--primary); color: white; }
+
+.notes-list-container {
+    flex: 1; overflow-y: auto;
+}
+
+/* Item da Lista */
+.note-item {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: 0.2s;
+    border-left: 3px solid transparent; /* Onde a cor vai aparecer */
+}
+.note-item:hover { background: rgba(255,255,255,0.03); }
+.note-item.active { background: rgba(255,255,255,0.05); }
+
+.note-item-title { font-weight: 600; font-size: 0.9rem; color: #eee; margin-bottom: 4px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-item-preview { font-size: 0.75rem; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Coluna da Direita (Editor) */
+.notes-editor {
+    flex: 1;
+    position: relative;
+    background: rgba(30, 30, 35, 0.4);
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Força altura total */
+    overflow: hidden;
+}
+
+.empty-state-editor {
+    height: 100%; display: flex; flex-direction: column; 
+    align-items: center; justify-content: center; color: var(--text-muted);
+}
+
+/* O container do formulário também precisa de altura total */
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+    align-items: flex-start; /* <--- Força alinhamento à esquerda */
+}
+
+
+.editor-header {
+    display: flex;
+    justify-content: space-between; /* Isso já deveria separar, mas o width ajuda */
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%; /* <--- IMPORTANTE: Garante que use a largura total */
+}
+
+.editor-title {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 800;
+    width: 100%;
+    margin-bottom: 5px;
+    
+    /* MANTENHA ASSIM: */
+    padding: 0;
+    outline: none;
+    font-family: var(--font-main);
+    line-height: 1.2;
+}
+
+.editor-meta {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 20px;
+    
+    /* A CORREÇÃO: */
+    padding-left: 0; /* Remove os 2px anteriores para alinhar perfeitamente */
+}
+
+.editor-body {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #ddd;
+    font-size: 1rem;
+    line-height: 1.6;
+    resize: none;
+    font-family: var(--font-main);
+    width: 100%;
+    margin-top: 20px;
+    
+    /* A CORREÇÃO: */
+    padding: 0;      /* Remove o espaço interno padrão */
+    margin-left: 0;  /* Garante que encoste na borda esquerda */
+    outline: none;   /* Remove borda azul ao clicar */
+}
+
+/* Color Picker */
+.color-picker { display: flex; gap: 8px; }
+.color-dot {
+    width: 16px; height: 16px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: 0.2s; opacity: 0.5;
+}
+.color-dot:hover { opacity: 1; transform: scale(1.1); }
+.color-dot.selected { opacity: 1; border-color: white; box-shadow: 0 0 10px currentColor; }
+
+.btn-text-danger {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    cursor: pointer;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    
+    /* ADICIONE ISSO AQUI: */
+    margin-left: auto; 
+    padding: 5px 10px; /* Um pouco de área de clique */
+    transition: 0.2s;
+}
+
+.btn-text-danger:hover {
+    opacity: 1;
+    background: rgba(255, 77, 77, 0.1);
+    border-radius: 6px;
+    text-decoration: none; /* Remove sublinhado se tiver */
+}

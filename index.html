@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bohemian Grimoire</title>
+    
+    <!-- Fonte Inter & Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <!-- CSS Externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Fundo Animado -->
+    <div class="background-orb"></div>
+    <div class="background-noise"></div>
+
+    <div class="app-wrapper">
+        <!-- Navegação Lateral -->
+        <nav class="sidebar">
+            <div class="brand">
+                <span class="material-icons-round">all_inclusive</span>
+            </div>
+            <div class="nav-group">
+                <button class="nav-btn active" data-tab="ficha" title="Ficha de Personagem">
+                    <span class="material-icons-round">person</span>
+                </button>
+                <button class="nav-btn" data-tab="notas" title="Notas de Campanha">
+                    <span class="material-icons-round">edit_note</span>
+                </button>
+            </div>
+            <div class="nav-footer">
+                <button class="nav-btn" title="Configurações">
+                    <span class="material-icons-round">settings</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Área Principal -->
+        <main class="content-area">
+            
+            <section id="ficha" class="tab-content active">
+                <div class="sheet-container">
+                    
+                    <!-- === COLUNA 1: IDENTIDADE & GENÉTICA === -->
+<!-- === COLUNA 1: IDENTIDADE & GENÉTICA === -->
+<div class="sheet-column">
+    
+    <div class="glass-card">
+        <!-- CABEÇALHO: FOTO + NOME -->
+        <div class="profile-header">
+            <div class="photo-uploader compact-photo" onclick="document.getElementById('char-photo-input').click()">
+                <img id="char-photo-preview" src="" style="display:none">
+                <span class="material-icons-round" style="font-size: 1.5rem;">add_a_photo</span>
+                <input type="file" id="char-photo-input" hidden accept="image/*">
+            </div>
+            <div class="profile-data">
+                <div class="input-group">
+                    <input type="text" id="char-name" placeholder="Nome do Personagem" class="compact-input name-input">
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS E RECURSOS (LINHA 1: NÍVEL, FÔLEGO, NAMEL) -->
+        <div class="row-group">
+            <!-- Nível -->
+            <div class="input-group" style="width: 50px;">
+                <label style="font-size:0.6rem; text-align:center;">Nível</label>
+                <input type="number" id="char-level" value="1" min="1" max="20" class="compact-input center-text">
+            </div>
+
+            <!-- Fôlego (Atual / Max) -->
+            <div class="input-group" style="flex: 1;">
+                <label style="font-size:0.6rem; text-align:center;">Fôlego Atual</label>
+                <div style="position: relative;">
+                    <input type="number" id="stamina-current" class="resource-input" placeholder="0">
+                    <span id="stamina-max" class="resource-max">/ 0</span>
+                </div>
+            </div>
+
+            <!-- Namel (Atual / Max) -->
+            <div class="input-group" style="flex: 1;">
+                <label style="font-size:0.6rem; text-align:center;">Namel Atual</label>
+                <div style="position: relative;">
+                    <input type="number" id="namel-current" class="resource-input" placeholder="0" style="color:#a78bfa; border-color:rgba(167, 139, 250, 0.3);">
+                    <span id="namel-max" class="resource-max">/ 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS E RECURSOS (LINHA 2: VIDA, DEFESA) -->
+        <div class="row-group mt-10">
+            <!-- Vida (Atual / Max) -->
+            <div class="input-group" style="flex: 1;">
+                <label style="font-size:0.6rem; text-align:center;">Vida Atual</label>
+                <div style="position: relative;">
+                    <input type="number" id="hp-current" class="resource-input" placeholder="0" style="color:#ff6b6b; border-color:rgba(255, 107, 107, 0.3);">
+                    <span id="hp-max" class="resource-max">/ 0</span>
+                </div>
+            </div>
+
+            <!-- Defesa (Calculada) -->
+            <div class="input-group" style="flex: 1;">
+                <label style="font-size:0.6rem; text-align:center;">Defesa Total</label>
+                <div id="def-display" class="static-display compact-display" style="color:#4dff88; border-color:rgba(77, 255, 136, 0.3);">0</div>
+            </div>
+        </div>
+
+        <!-- DIVISÓRIA -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;"></div>
+
+        <!-- OCUPAÇÃO E DINHEIRO -->
+        <div class="row-group">
+            <div class="input-group" style="flex: 2;">
+                <label>Ocupação</label>
+                <button id="btn-occupation" class="selection-trigger compact-trigger" onclick="openSelectionModal('occupation')">
+                    <span id="occupation-display">Selecione...</span>
+                    <span class="material-icons-round" style="font-size: 1rem;">work</span>
+                </button>
+            </div>
+            
+            <!-- CAMPO DE DINHEIRO -->
+            <div class="input-group" style="flex: 1;">
+                <label>Dinheiro ($)</label>
+                <input type="text" id="char-money" placeholder="0" class="compact-input" style="text-align: right; color: #ffd700;">
+            </div>
+        </div>
+
+        <!-- GENÉTICA -->
+        <h3 class="card-title mt-10" style="margin-bottom: 5px;">Genética</h3>
+        <div class="row-group" style="gap: 10px;">
+            <div class="input-group" style="flex: 1;">
+                <label>Raça</label>
+                <button id="btn-race" class="selection-trigger compact-trigger" onclick="openSelectionModal('race')">
+                    <span id="race-display" data-key="humano">Selecione...</span>
+                </button>
+            </div>
+            <div class="input-group" style="flex: 1;">
+                <label>Variação</label>
+                <button id="btn-variation" class="selection-trigger compact-trigger" onclick="openSelectionModal('variation')">
+                    <span id="variation-display" data-key="padrao">Padrão</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Painel Híbrido (Oculto por padrão) -->
+        <div id="hybrid-panel" class="hidden mt-10">
+            <div class="hybrid-grid">
+                <div class="input-group">
+                    <label>Corpo</label>
+                    <select id="hybrid-dom" class="compact-input"><option value="humano">Humano</option><option value="elfo">Elfo</option><option value="sereia">Sereia</option><option value="angeriano">Angeriano</option></select>
+                </div>
+                <div class="input-group">
+                    <label>Poder</label>
+                    <select id="hybrid-rec" class="compact-input"><option value="humano">Humano</option><option value="elfo">Elfo</option><option value="sereia">Sereia</option><option value="angeriano">Angeriano</option></select>
+                </div>
+            </div>
+        </div>
+
+        <!-- INFO -->
+        <div id="race-info" class="info-box compact-info">
+            Configure sua genética acima.
+        </div>
+
+    </div> <!-- Fim do Glass Card -->
+</div>
+
+<!-- === COLUNA 2: ATRIBUTOS & PERÍCIAS === -->
+<div class="sheet-column">
+    
+    <!-- ATRIBUTOS (Agora no topo e compactos) -->
+    <div class="glass-card mb-20">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3 class="card-title" style="margin:0; border:none;">Atributos</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">
+                Pontos Restantes: <strong id="points-remaining" style="color:var(--primary); font-size: 1.1rem;">60</strong>
+            </span>
+        </div>
+        <div class="attributes-grid">
+            <!-- Gerados via JS em 3 colunas -->
+        </div>
+    </div>
+
+    <!-- PERÍCIAS (Agora embaixo) -->
+    <div class="glass-card" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; margin-bottom: 10px;">
+            <h3 class="card-title" style="margin:0; border:none;">Perícias</h3>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Bônus Prof: <strong style="color:var(--primary)" id="prof-bonus">+2</strong></span>
+        </div>
+        
+        <div class="skills-list" id="skills-container" style="overflow-y: auto; flex: 1; padding-right: 5px;">
+            <!-- Gerados via JS -->
+        </div>
+    </div>
+</div>
+
+                    <!-- === COLUNA 3: PODERES E ARMAS === -->
+                    <div class="sheet-column">
+                        
+                        <!-- Fontes de Poder -->
+                        <div class="glass-card">
+                            <h3 class="card-title">Fonte de Poder</h3>
+                            <div class="tabs-power">
+                                <button class="p-tab active" onclick="showPowerForm('insolitude', this)">Insolitude</button>
+                                <button class="p-tab" onclick="showPowerForm('namel', this)">Namel</button>
+                                <button class="p-tab" onclick="showPowerForm('sentidos', this)">Sentidos</button>
+                            </div>
+                            
+                            <div id="form-insolitude" class="power-form">
+                                <div class="input-group">
+                                    <label>Nome da Insolitude</label>
+                                    <input type="text" placeholder="Ex: Controle de Chamas">
+                                </div>
+                                <div class="input-group mt-10">
+                                    <label>Descrição / Gatilho</label>
+                                    <textarea placeholder="Descreva o efeito e o trauma..." style="height: 100px;"></textarea>
+                                </div>
+                            </div>
+
+                            <div id="form-namel" class="power-form hidden">
+                                <label style="margin-bottom:10px; display:block;">Magias Copiadas (Máx: 3)</label>
+                                <div class="slot-item"><span class="slot-num">1</span><input type="text" placeholder="Magia 1"></div>
+                                <div class="slot-item"><span class="slot-num">2</span><input type="text" placeholder="Magia 2"></div>
+                                <div class="slot-item"><span class="slot-num">3</span><input type="text" placeholder="Magia 3"></div>
+                            </div>
+
+                            <div id="form-sentidos" class="power-form hidden">
+                                <label style="margin-bottom:10px; display:block;">Fôlego: <span style="color:var(--primary)">Máximo</span></label>
+                                <div class="slot-grid">
+                                    <div class="slot-item-mini"><label>Visão</label><input type="text" placeholder="Nível"></div>
+                                    <div class="slot-item-mini"><label>Audição</label><input type="text" placeholder="Nível"></div>
+                                    <div class="slot-item-mini"><label>Olfato</label><input type="text" placeholder="Nível"></div>
+                                    <div class="slot-item-mini"><label>Tato</label><input type="text" placeholder="Nível"></div>
+                                    <div class="slot-item-mini"><label>Paladar</label><input type="text" placeholder="Nível"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card mt-20">
+    <h3 class="card-title">Proteção & Defesa</h3>
+    <div class="row-group" style="gap: 10px;">
+        
+        <!-- Slot de Armadura -->
+        <div class="input-group" style="flex: 1;">
+            <label>Traje / Armadura</label>
+            <button id="btn-armor" class="selection-trigger" onclick="openSelectionModal('armor')">
+                <span id="armor-display" data-bonus="0">Roupas Civis</span>
+                <span class="badge-bonus" id="armor-badge">+0</span>
+            </button>
+        </div>
+
+        <!-- Slot de Escudo/Acessório -->
+        <div class="input-group" style="flex: 1;">
+            <label>Escudo / Acessório</label>
+            <button id="btn-shield" class="selection-trigger" onclick="openSelectionModal('shield')">
+                <span id="shield-display" data-bonus="0">Nenhum</span>
+                <span class="badge-bonus" id="shield-badge">+0</span>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+                        <!-- Armas -->
+                        <div class="glass-card mt-20">
+                            <h3 class="card-title">Arsenal</h3>
+                            <div class="weapon-list" id="weapon-container"></div>
+                            <button class="btn-add-weapon" id="btn-add-weapon">+ Adicionar Arma</button>
+                        </div>
+                    </div> 
+                </div> 
+            </section>
+
+            <!-- Placeholder para Nota -->
+<section id="notas" class="tab-content">
+    <div class="notes-layout">
+        <!-- COLUNA DA ESQUERDA: LISTA -->
+        <aside class="notes-sidebar">
+            <div class="notes-sidebar-header">
+                <h2>Diário</h2>
+                <button id="btn-add-note" class="btn-icon-small" title="Nova Nota">
+                    <span class="material-icons-round">add</span>
+                </button>
+            </div>
+            <div id="notes-list" class="notes-list-container">
+                <!-- Itens da lista gerados via JS -->
+            </div>
+        </aside>
+
+        <!-- COLUNA DA DIREITA: EDITOR -->
+        <main class="notes-editor" id="notes-editor-area">
+            <!-- Estado Vazio (quando nenhuma nota selecionada) -->
+            <div id="empty-note-state" class="empty-state-editor">
+                <span class="material-icons-round" style="font-size: 3rem; opacity: 0.2;">library_books</span>
+                <p>Selecione ou crie uma nota</p>
+            </div>
+
+            <!-- Editor Real (Oculto por padrão) -->
+            <div id="active-note-form" class="editor-container hidden">
+                <div class="editor-header">
+                    <div class="color-picker" id="note-color-picker">
+                        <!-- Bolinhas de cor geradas via JS -->
+                    </div>
+                    <button id="btn-delete-note" class="btn-text-danger">Excluir Nota</button>
+                </div>
+                
+                <input type="text" id="current-note-title" class="editor-title" placeholder="Título da Nota...">
+                <div class="editor-meta">Editado em: <span id="current-note-date">Hoje</span></div>
+                
+                <textarea id="current-note-body" class="editor-body" placeholder="Escreva suas anotações aqui..."></textarea>
+            </div>
+        </main>
+    </div>
+</section>
+
+<!-- MODAL DE CONFIGURAÇÕES -->
+<div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+        <div class="modal-header">
+            <h3>Configurações</h3>
+            <button class="btn-close" onclick="document.getElementById('settings-modal').classList.add('hidden')">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size: 0.9rem; color: #aaa; margin-bottom: 20px;">
+                Seus dados são salvos automaticamente neste navegador. 
+                Use as opções abaixo para fazer backup ou transferir sua ficha.
+            </p>
+            
+            <div class="row-group">
+                <button class="btn-confirm" style="width:100%; background: #2a2a30; border: 1px solid #444;" onclick="window.exportData()">
+                    <span class="material-icons-round" style="font-size:1rem; vertical-align:middle;">download</span>
+                    Exportar Ficha (JSON)
+                </button>
+            </div>
+            
+            <div class="row-group mt-10">
+                <button class="btn-confirm" style="width:100%; background: var(--primary);" onclick="document.getElementById('import-file').click()">
+                    <span class="material-icons-round" style="font-size:1rem; vertical-align:middle;">upload</span>
+                    Importar Ficha
+                </button>
+                <input type="file" id="import-file" hidden accept=".json" onchange="window.importData(this)">
+            </div>
+
+            <div class="row-group mt-20">
+                 <button class="btn-text-danger" style="width:100%; font-size:0.8rem;" onclick="window.resetAllData()">
+                    Resetar Ficha Inteira (Apagar Tudo)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- MODAL ARMA (Sem alterações estruturais, mantido para funcionamento) -->
+    <div id="weapon-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>Forjar Arsenal</h3>
+                <button class="btn-close" onclick="closeWeaponModal()"><span class="material-icons-round">close</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Nome</label>
+                    <input type="text" id="modal-weapon-name">
+                </div>
+                <div class="row-group">
+                    <div class="input-group">
+                        <label>Tipo</label>
+                        <select id="modal-weapon-type" onchange="previewModalDamage()"></select>
+                    </div>
+<div class="input-group">
+    <label>Qualidade</label>
+    <select id="modal-weapon-quality" onchange="previewModalDamage()">
+        <option value="sucata">Sucata (Comum)</option>
+        <option value="padrao" selected>Padrão (Militar)</option>
+        <option value="obra_prima">Obra-Prima (Rara)</option>
+        <option value="reliquia">Relíquia (Lendária)</option>
+    </select>
+</div>
+                </div>
+                <div class="input-group mt-10">
+                    <label>Dano: <span id="modal-weapon-dmg" style="color:var(--primary)">-</span></label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-confirm" onclick="confirmAddWeapon()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SELEÇÃO -->
+    <div id="selection-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-card modal-large">
+            <div class="modal-header">
+                <h3 id="modal-selection-title">Selecione</h3>
+                <button class="btn-close" onclick="closeSelectionModal()"><span class="material-icons-round">close</span></button>
+            </div>
+            <div class="modal-body-split">
+                <div class="selection-list" id="modal-list-container"></div>
+                <div class="selection-details">
+                    <h4 id="detail-title">Titulo</h4>
+                    <p id="detail-desc">Descrição...</p>
+                    <div id="detail-stats" class="stat-badge-container"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-confirm" id="btn-confirm-selection">Confirmar Escolha</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="notes.js"></script>
+    <script src="storage.js"></script>
+</body>
+</html>
