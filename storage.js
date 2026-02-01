@@ -49,7 +49,8 @@ window.saveGlobalData = function() {
         // 4. Arsenal (Salva o HTML interno da lista de armas)
         weaponsHTML: document.getElementById('weapon-container').innerHTML,
         // 5. Perícias (Salva quais estão treinadas)
-        skills: getSkillsState()
+        skills: getSkillsState(),
+        photo: document.getElementById('char-photo-preview').src 
     };
 
     // Coleta todos inputs de texto/numero
@@ -105,6 +106,13 @@ function loadAllData() {
             }
         }
     }
+    if (data.photo && data.photo.startsWith('data:image')) {
+        const preview = document.getElementById('char-photo-preview');
+        const icon = document.querySelector('.photo-uploader .material-icons-round');
+        preview.src = data.photo;
+        preview.style.display = 'block';
+        if (icon) icon.style.display = 'none';
+    }
 
     // 3. Restaura Notas
     if(window.loadNotesFromStorage) {
@@ -120,6 +128,7 @@ function loadAllData() {
     if(data.skills) {
         restoreSkillsState(data.skills);
     }
+
 
     // Força recalcular tudo (Atributos, Defesa, Vida)
     if(window.recalculateAllBonuses) window.recalculateAllBonuses();

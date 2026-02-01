@@ -32,6 +32,10 @@
                 <button class="nav-btn" data-tab="notas" title="Notas de Campanha">
                     <span class="material-icons-round">edit_note</span>
                 </button>
+
+                <button class="nav-btn" data-tab="biblioteca" title="Biblioteca de Documentos">
+                    <span class="material-icons-round">library_books</span>
+                </button>
             </div>
             <div class="nav-footer">
                 <button class="nav-btn" title="Configurações">
@@ -305,7 +309,10 @@
                     <div class="color-picker" id="note-color-picker">
                         <!-- Bolinhas de cor geradas via JS -->
                     </div>
-                    <button id="btn-delete-note" class="btn-text-danger">Excluir Nota</button>
+                    <button id="btn-delete-note" class="btn-text-danger">
+    <span class="material-icons-round" style="font-size: 1rem; margin-right: 5px;">delete</span>
+    Excluir Nota
+</button>
                 </div>
                 
                 <input type="text" id="current-note-title" class="editor-title" placeholder="Título da Nota...">
@@ -314,6 +321,29 @@
                 <textarea id="current-note-body" class="editor-body" placeholder="Escreva suas anotações aqui..."></textarea>
             </div>
         </main>
+    </div>
+</section>
+
+<section id="biblioteca" class="tab-content">
+    <div class="glass-card" style="height: 100%; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 class="card-title" style="margin: 0; border: none;">Biblioteca de Documentos</h2>
+            <div>
+                <input type="file" id="file-upload" hidden accept=".pdf,.doc,.docx,.txt">
+                <button class="btn-confirm" onclick="document.getElementById('file-upload').click()">
+                    <span class="material-icons-round" style="vertical-align: middle; font-size: 1.2rem;">upload_file</span>
+                    Subir Arquivo
+                </button>
+            </div>
+        </div>
+
+        <div id="file-list" class="file-grid">
+            <!-- Arquivos aparecerão aqui -->
+        </div>
+        
+        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 15px;">
+            * Os arquivos são salvos localmente neste navegador. Limite sugerido: 50MB no total.
+        </p>
     </div>
 </section>
 
@@ -414,7 +444,30 @@
         </div>
     </div>
 
-    <script src="notes.js"></script> 
+    <!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+<div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card" style="border-color: #ff4d4d;">
+        <div class="modal-header">
+            <h3 style="color: #ff4d4d; display: flex; align-items: center; gap: 10px;">
+                <span class="material-icons-round">warning</span>
+                Confirmar
+            </h3>
+            <button class="btn-close" onclick="closeConfirmModal()">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="color: #eee; line-height: 1.5;">Tem certeza que deseja excluir? Esta ação é permanente e não pode ser desfeita.</p>
+        </div>
+        <div class="modal-footer" style="margin-top: 20px;">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Cancelar</button>
+            <button id="btn-confirm-delete-action" class="btn-confirm" style="background: #ff4d4d;">Apagar Agora</button>
+        </div>
+    </div>
+</div>
+
+    <script src="notes.js"></script>
+    <script src="library.js"></script>
     <script src="script.js"></script>  
     <script src="storage.js"></script>
 </body>

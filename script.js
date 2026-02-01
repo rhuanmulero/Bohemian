@@ -225,12 +225,12 @@ const weaponDB = {
 const attributes = ["FOR", "DES", "CON", "INT", "SAB", "CAR"];
 const skillsList = [
     { name: "Acrobacia", attr: "DES" },
-    { name: "Adestrar Animais", attr: "SAB" },
+    { name: "Adestramento", attr: "SAB" },
     { name: "Arcanismo", attr: "INT" },
     { name: "Atletismo", attr: "FOR" },
     { name: "Atuação", attr: "CAR" },
-    { name: "Pompitonismo", attr: "INT" }, 
     { name: "Enganação", attr: "CAR" },
+    { name: "Engenharia", attr: "INT" },
     { name: "Furtividade", attr: "DES" },
     { name: "História", attr: "INT" },
     { name: "Intimidação", attr: "CAR" },
@@ -240,12 +240,12 @@ const skillsList = [
     { name: "Natureza", attr: "INT" },
     { name: "Percepção", attr: "SAB" },
     { name: "Performance", attr: "CAR" },
-    { name: "Persuasão", attr: "CAR" },
     { name: "Pilotagem", attr: "DES" },
+    { name: "Pompitologia", attr: "INT" },
+    { name: "Pontaria", attr: "DES" },
     { name: "Prestidigitação", attr: "DES" },
     { name: "Religião", attr: "INT" },
-    { name: "Sobrevivência", attr: "SAB" },
-    { name: "Engenharia", attr: "INT" }
+    { name: "Sobrevivência", attr: "SAB" }
 ];
 
 /* --- BANCO DE DADOS: ARMADURAS E ESCUDOS --- */
@@ -892,68 +892,98 @@ function setupNavigation() {
    CÁLCULO DE STATUS DE COMBATE (ATUALIZADO)
    ========================================================================== */
 function updateCombatStats() {
-    // 1. Pega os atributos necessários
     const conInput = document.getElementById('attr-CON');
     const sabInput = document.getElementById('attr-SAB');
-    const desInput = document.getElementById('attr-DES'); // Agora usamos DES para defesa
+    const desInput = document.getElementById('attr-DES');
 
-    // 2. Calcula os Totais (Base + Bônus Racial)
     const totalCON = (parseInt(conInput?.value) || 0) + (activeBonuses['CON'] || 0);
     const totalSAB = (parseInt(sabInput?.value) || 0) + (activeBonuses['SAB'] || 0);
     const totalDES = (parseInt(desInput?.value) || 0) + (activeBonuses['DES'] || 0);
 
-    // --- CÁLCULOS DE RECURSOS (Vida, Fôlego, Namel) ---
     const maxHP = Math.floor(totalCON * 1.5);
     const maxStamina = totalCON;
     const maxNamel = Math.floor(totalSAB * 1.25);
 
-    // --- CÁLCULO DE DEFESA BALANCEADO ---
-    
-    // A. Pega os bônus dos itens
-    const armorEl = document.getElementById('armor-display');
-    const shieldEl = document.getElementById('shield-display');
-    
-    const armorBonus = armorEl ? (parseInt(armorEl.getAttribute('data-bonus')) || 0) : 0;
-    const shieldBonus = shieldEl ? (parseInt(shieldEl.getAttribute('data-bonus')) || 0) : 0;
+    // Atualiza os textos de exibição (/ 20)
+    document.getElementById('hp-max').innerText = "/ " + maxHP;
+    document.getElementById('stamina-max').innerText = "/ " + maxStamina;
+    document.getElementById('namel-max').innerText = "/ " + maxNamel;
 
-    // B. Calcula o Modificador de Destreza (Agilidade)
-    // Fórmula padrão d20: (Atributo - 10) / 2. Ex: 10->0, 18->+4
+    // Configura o limite máximo nos inputs e valida o valor atual
+    const resources = [
+        { id: 'hp-current', max: maxHP },
+        { id: 'stamina-current', max: maxStamina },
+        { id: 'namel-current', max: maxNamel }
+    ];
+
+    resources.forEach(res => {
+        const input = document.getElementById(res.id);
+        if (input) {
+            input.max = res.max; // Define o limite nativo do HTML
+            
+            // Se o campo estiver vazio (ficha nova), preenche com o máximo
+            if (input.value === "") {
+                input.value = res.max;
+            } 
+            // Se o valor atual for maior que o novo máximo (ex: mudou atributo), reduz para o máximo
+            else if (parseInt(input.value) > res.max) {
+                input.value = res.max;
+            }
+        }
+    });
+
+    // Cálculo de Defesa (Mantido o original)
+    const armorBonus = parseInt(document.getElementById('armor-display')?.getAttribute('data-bonus')) || 0;
+    const shieldBonus = parseInt(document.getElementById('shield-display')?.getAttribute('data-bonus')) || 0;
     let agiBonus = Math.floor((totalDES - 10) / 2);
-    if (agiBonus < 0) agiBonus = 0; // Não penaliza defesa se for desajeitado (opcional)
+    if (agiBonus < 0) agiBonus = 0;
+    if (armorBonus >= 4) agiBonus = 0; 
+    else if (armorBonus === 3) agiBonus = Math.min(agiBonus, 2);
 
-    // C. REGRA DO LIMITADOR (Balanceamento)
-    // Armaduras pesadas limitam o quanto você pode usar sua agilidade
-    if (armorBonus >= 4) { 
-        // Armadura Pesada (Choque/Exo): Agilidade conta muito pouco ou nada
-        agiBonus = Math.min(agiBonus, 0); 
-    } else if (armorBonus === 3) {
-        // Armadura Média (Tático): Agilidade conta no máx +2
-        agiBonus = Math.min(agiBonus, 2);
-    }
-    // Armadura Leve (0-2): Agilidade conta total
-
-    // D. Defesa Final
-    // Base 10 + Agilidade Permitida + Armadura + Escudo
     const defense = 10 + agiBonus + armorBonus + shieldBonus;
-
-    // --- ATUALIZAÇÃO NA TELA ---
-    const elHpMax = document.getElementById('hp-max');
-    const elStamMax = document.getElementById('stamina-max');
-    const elNamelMax = document.getElementById('namel-max');
-    const elDef = document.getElementById('def-display');
-
-    if(elHpMax) elHpMax.innerText = "/ " + maxHP;
-    if(elStamMax) elStamMax.innerText = "/ " + maxStamina;
-    if(elNamelMax) elNamelMax.innerText = "/ " + maxNamel;
-    if(elDef) elDef.innerText = defense;
-
-    // Inicializa inputs vazios
-    const inpHP = document.getElementById('hp-current');
-    if(inpHP && inpHP.value === "") inpHP.value = maxHP;
-
-    const inpStam = document.getElementById('stamina-current');
-    if(inpStam && inpStam.value === "") inpStam.value = maxStamina;
-    
-    const inpNamel = document.getElementById('namel-current');
-    if(inpNamel && inpNamel.value === "") inpNamel.value = maxNamel;
+    document.getElementById('def-display').innerText = defense;
 }
+
+// --- LÓGICA DE FOTO DO PERSONAGEM ---
+document.getElementById('char-photo-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // Validação de tamanho (Opcional: alerta se for maior que 1MB para não estourar o localStorage)
+        if (file.size > 1048576) { 
+            alert("A imagem é muito grande! Escolha uma imagem de até 1MB.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const base64String = event.target.result;
+            const preview = document.getElementById('char-photo-preview');
+            const icon = document.querySelector('.photo-uploader .material-icons-round');
+
+            // Atualiza o visual
+            preview.src = base64String;
+            preview.style.display = 'block';
+            if (icon) icon.style.display = 'none';
+
+            // Salva automaticamente após carregar a foto
+            window.saveGlobalData();
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Impede que recursos ultrapassem o máximo ao digitar
+['hp-current', 'stamina-current', 'namel-current'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+        input.addEventListener('input', function() {
+            const max = parseInt(this.max);
+            const val = parseInt(this.value);
+
+            if (val > max) this.value = max;
+            if (val < 0) this.value = 0;
+            
+            window.saveGlobalData(); // Salva a alteração
+        });
+    }
+});

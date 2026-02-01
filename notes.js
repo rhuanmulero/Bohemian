@@ -66,13 +66,33 @@ function createNote() {
 
 function deleteActiveNote() {
     if(!activeNoteId) return;
-    if(confirm('Apagar esta nota permanentemente?')) {
-        notes = notes.filter(n => n.id !== activeNoteId);
-        activeNoteId = null;
-        saveGlobalData();
-        renderNotesList();
-        loadActiveNote();
-    }
+
+    // 1. Mostra o modal
+    const modal = document.getElementById('confirm-modal');
+    modal.classList.remove('hidden');
+
+    // 2. Configura o botão de confirmação dentro do modal
+    const confirmBtn = document.getElementById('btn-confirm-delete-action');
+    
+    // Usamos onclick direto para garantir que não acumule eventos de cliques anteriores
+    confirmBtn.onclick = () => {
+        executeDeletion();
+    };
+}
+
+function executeDeletion() {
+    // A lógica real de apagar
+    notes = notes.filter(n => n.id !== activeNoteId);
+    activeNoteId = null;
+    
+    saveGlobalData();    // Salva no LocalStorage
+    renderNotesList();   // Atualiza a lista lateral
+    loadActiveNote();    // Volta para o estado vazio do editor
+    closeConfirmModal(); // Fecha o modal
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.add('hidden');
 }
 
 function updateActiveNote(field, value) {

@@ -62,7 +62,15 @@ body {
     display: flex; flex-direction: column; align-items: center; padding: 30px 0; justify-content: space-between;
 }
 .brand { color: var(--text-main); margin-bottom: 40px; opacity: 0.8; }
-.nav-group { display: flex; flex-direction: column; gap: 20px; }
+.nav-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
 .nav-btn {
     background: transparent; border: none; color: var(--text-muted);
     width: 50px; height: 50px; border-radius: 14px; cursor: pointer;
@@ -129,7 +137,13 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
     border: 2px dashed rgba(255,255,255,0.2); display: flex;
     align-items: center; justify-content: center; cursor: pointer; overflow: hidden;
 }
-.photo-uploader img { width: 100%; height: 100%; object-fit: cover; }
+
+.photo-uploader img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Faz a imagem preencher o círculo sem esticar */
+    border-radius: 50%;
+}
 
 /* --- ATRIBUTOS (NOVO LAYOUT) --- */
 .attributes-grid {
@@ -324,7 +338,21 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 .modal-header h3 { color: var(--primary); margin: 0; }
 .btn-close { background: none; border: none; color: #fff; cursor: pointer; }
 .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
-.btn-cancel { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #ccc; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
 .btn-confirm { background: var(--primary); border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 .btn-confirm:hover { box-shadow: 0 0 15px var(--primary-glow); }
 
@@ -792,19 +820,114 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); box-sh
 .color-dot.selected { opacity: 1; border-color: white; box-shadow: 0 0 10px currentColor; }
 
 .btn-text-danger {
-    background-color: transparent !important; /* Força transparência */
-    border: 1px solid transparent; /* Evita pulos de layout */
+    background: transparent !important;
+    border: 1px solid rgba(255, 77, 77, 0.2) !important; /* Uma bordinha sutil */
     color: #ff4d4d;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
     opacity: 0.7;
-    margin-left: auto; 
-    padding: 10px;
+    padding: 6px 12px; /* Reduzi o padding */
     transition: 0.2s;
-    width: 100%; /* Garante que ocupe a largura no modal */
+    width: auto !important; /* ISSO CORRIGE O ERRO: Muda de 100% para auto */
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
 }
 
 .btn-text-danger:hover {
     opacity: 1;
-    background: rgba(255, 77, 77, 0.1) !important;
+    background: rgba(255, 77, 77, 0.15) !important;
+    border-color: #ff4d4d !important;
+    color: #ff6b6b;
+}
+
+.file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Cards menores e proporcionais */
+    gap: 15px;
+    padding: 5px;
+    align-content: start; /* Impede que os cards estiquem para baixo */
+}
+
+/* O Card em si */
+.file-item {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: 0.3s ease;
+    min-height: 160px; /* Altura fixa para todos ficarem iguais */
+    position: relative;
+}
+
+.file-item:hover {
+    background: rgba(124, 58, 237, 0.05);
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+/* Ícone menor e mais centralizado */
+.file-icon {
+    font-size: 2.5rem !important;
+    color: var(--primary);
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+/* Nome do arquivo com limite de linhas */
+.file-name {
+    font-size: 0.75rem;
+    color: #eee;
+    font-weight: 500;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* No máximo 2 linhas de nome */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+/* Botões menores e alinhados */
+.file-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: auto; /* Empurra os botões para o fundo do card */
+}
+
+.btn-file-dl, .btn-file-del {
+    flex: 1;
+    padding: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
     border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-file-dl {
+    background: var(--primary);
+    color: white;
+    border: none;
+}
+
+.btn-file-del {
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+    border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+.btn-file-del:hover {
+    background: #ff4d4d;
+    color: white;
 }
